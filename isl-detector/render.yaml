@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: isl-detector
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
