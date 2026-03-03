@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: sign-language-api
+    runtime: docker
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: PYTHON_VERSION
+        value: 3.11.0

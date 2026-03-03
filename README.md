@@ -1,71 +1,69 @@
-# 🤟 ISLDetect — Real-Time Indian Sign Language Recognition
+# Sign Language Recognition Model
 
-Real-time ISL detection using **MediaPipe** hand tracking with bilingual **English + Hindi (हिंदी)** output.
+Real-time gesture recognition: **MediaPipe** + **TensorFlow/Keras** + **FastAPI**, deployable on **Render**.
 
-## Features
-- Real-time webcam detection via WebSocket
-- 25 ISL signs (alphabets, numbers, common words)
-- English + Hindi output side by side
-- Hand landmark visualization on camera feed
-- Finger state indicator & detection history
-- Docker + Render deploy-ready (free tier)
+## Setup
 
-## 🧪 Signs You Can Test
-
-### Alphabets
-| Sign | Hindi | How to Form |
-|------|-------|-------------|
-| A | अ | Closed fist, thumb on side |
-| B | ब | Flat hand, 4 fingers up, thumb folded |
-| C | स | Curved hand like a cup |
-| D | ड | Index up, rest curled |
-| I | इ | Only pinky extended |
-| L | ल | L-shape: thumb + index at 90 degrees |
-| V | व | Peace/victory sign |
-| W | व | Three fingers up |
-| Y | य | Thumb + pinky extended |
-
-### Numbers
-| Sign | Hindi | How to Form |
-|------|-------|-------------|
-| One | एक | Index finger up |
-| Two | दो | Index + middle up |
-| Three | तीन | Index + middle + ring up |
-| Four | चार | Four fingers up, thumb folded |
-| Five | पाँच | All fingers spread |
-
-### Words
-| Sign | Hindi | How to Form |
-|------|-------|-------------|
-| Hello | नमस्ते | Open palm, fingers spread wide |
-| Yes | हाँ | Thumbs up |
-| Bad | बुरा | Thumbs down |
-| OK | ठीक है | Thumb + index circle |
-| Stop | रुको | Palm forward, fingers together |
-| I Love You | मैं तुमसे प्यार... | Thumb + index + pinky extended |
-| Rock | रॉक | Index + pinky extended |
-
-## Local Setup
 ```bash
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-Open http://localhost:8000
 
-## Docker
+## Collect Custom Data (3 methods)
+
+**Webcam:**
 ```bash
-docker build -t isl-detector .
-docker run -p 8000:10000 isl-detector
+python -m app.collect_data --label hello --samples 200
+python -m app.collect_data --label thank_you --samples 200
+```
+Press S to start, Q to quit.
+
+**From images:**
+```bash
+python -m app.collect_data --label hello --from-images ./images/hello/
 ```
 
-## Deploy to Render (Free)
-1. Push to GitHub
-2. Render.com -> New -> Web Service -> connect repo
-3. Auto-detects Dockerfile. Port: 10000, Plan: free
-4. Deploy!
+**From CSV** (format: label, x0, y0, z0, ... x20, y20, z20):
+```bash
+python -m app.collect_data --from-csv dataset.csv
+```
 
-## Tips for Best Detection
-- Good even lighting, plain background
-- Hand 30-60cm from camera
-- Hold signs steady for 1-2 seconds
-- Palm facing camera for most signs
+**List data:** `python -m app.collect_data --list`
+
+## Train
+
+```bash
+python -m app.train --epochs 50 --batch-size 32 --lr 0.001
+```
+
+Saves `models/sign_model.keras` and `models/labels.json`.
+
+## Run Locally
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+Open http://localhost:8000 for the webcam demo.
+
+## API Endpoints
+
+- `GET /` — Demo UI
+- `GET /health` — Health check
+- `POST /predict` — Upload image file
+- `POST /predict/base64` — Base64 image JSON
+- `POST /predict/landmarks` — 63 landmark values
+
+## Deploy to Render
+
+1. Commit trained model files (`models/sign_model.keras`, `models/labels.json`)
+2. Push to GitHub
+3. Render Dashboard > New Web Service > Docker > Connect repo > Deploy
+4. Use Starter plan or higher (TF needs ~1GB RAM)
+5. Health check auto-configured via `render.yaml`
+
+## Adding Gestures
+
+1. `python -m app.collect_data --label new_sign --samples 200`
+2. `python -m app.train`
+3. Push and redeploy
