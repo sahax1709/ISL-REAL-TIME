@@ -214,7 +214,76 @@ PYTHONUNBUFFERED=1
 5. **Transfer learning**: Use a pre-trained hand gesture model as base
 
 ---
+| Emoji | English | Hindi | Description                             |
+| ----- | ------- | ----- | --------------------------------------- |
+| 🅰️   | A       | अ     | Fist with thumb on side of index finger |
+| 🅱️   | B       | ब     | Flat hand, fingers together up          |
+| 🌜    | C       | स     | Hand curved into C shape                |
+| 👆    | D       | ड     | Index finger up                         |
+| 🤏    | E       | इ     | Fingertips curled to thumb              |
+| 👌    | F       | फ     | Thumb+index form circle                 |
+| 👉    | G       | ग     | Index+thumb sideways                    |
+| ✌️➡️  | H       | ह     | Index+middle sideways                   |
+| 🤙⬆️  | I       | ई     | Pinky raised                            |
+| 🤙↘️  | J       | ज     | Pinky traces J in air                   |
+| ✌️👍  | K       | क     | V shape with thumb between              |
+| 👆👍  | L       | ल     | L shape                                 |
+| ✊     | M       | म     | Thumb under three fingers               |
+| ✊     | N       | न     | Thumb under two fingers                 |
+| ⭕     | O       | ओ     | Fingertips form circle                  |
+| ✌️⬇️  | P       | प     | K tilted downward                       |
+| 👉⬇️  | Q       | क़    | G tilted downward                       |
+| 🤞    | R       | र     | Fingers crossed                         |
+| ✊👍   | S       | स     | Fist, thumb over fingers                |
+| ✊🤏   | T       | ट     | Thumb between fingers                   |
+| ✌️    | U       | उ     | Index+middle together                   |
+| ✌️    | V       | व     | Peace sign                              |
+| 3️⃣✋  | W       | व़    | Three fingers up                        |
+| ☝️🪝  | X       | एक्स  | Hooked index                            |
+| 🤙    | Y       | य     | Thumb+pinky out                         |
+| ☝️✍️  | Z       | ज़    | Trace Z in air                          |
+| Emoji | Digit | Hindi | Description               |
+| ----- | ----- | ----- | ------------------------- |
+| ⭕     | 0     | ०     | Fingertips meet thumb     |
+| ☝️    | 1     | १     | Index finger up           |
+| ✌️    | 2     | २     | Peace sign                |
+| 3️⃣   | 3     | ३     | Three fingers up          |
+| 4️⃣   | 4     | ४     | Four fingers up           |
+| 🖐️   | 5     | ५     | Five fingers spread       |
+| 🤙    | 6     | ६     | Thumb touches pinky       |
+| 🖖    | 7     | ७     | Thumb touches ring finger |
+| 🤟    | 8     | ८     | Thumb touches middle      |
+| 👌    | 9     | ९     | Thumb touches index       |
+| Emoji       | English   | Hindi      | Description              |
+| ----------- | --------- | ---------- | ------------------------ |
+| 👋          | Hello     | नमस्ते     | Open hand salute motion  |
+| 🙏          | Thank You | धन्यवाद    | Hand from chin forward   |
+| 😊🙏        | Please    | कृपया      | Rub chest circularly     |
+| 😔          | Sorry     | माफ़ कीजिए | Fist rub on chest        |
+| 👍          | Yes       | हाँ        | Fist nodding             |
+| ❌           | No        | नहीं       | Snap motion              |
+| 🤝          | Help      | मदद        | Flat hand on fist upward |
+| ✋🛑         | Stop      | रुको       | Chop down onto palm      |
+| 👍😊        | Good      | अच्छा      | Chin forward motion      |
+| 👎          | Bad       | बुरा       | Flip hand downward       |
+| ❤️          | Love      | प्यार      | Arms crossed hugging     |
+| 🤝          | Friend    | दोस्त      | Hook index fingers       |
+| 👨‍👩‍👧‍👦 | Family    | परिवार     | F-hands circle outward   |
+| 🍽️         | Eat       | खाना       | Fingertips tap mouth     |
+| 🥤          | Drink     | पीना       | C-hand drinking motion   |
+| 💧          | Water     | पानी       | W taps chin              |
+| ➕           | More      | और         | Bunched fingers tap      |
+| ✅           | Done      | हो गया     | Flip palms outward       |
+| 🤲          | Want      | चाहिए      | Grab toward body         |
+| ❗           | Need      | ज़रूरत     | X-hand bends             |
+| 👉➡️        | Go        | जाओ        | Fingers arc forward      |
+| 👈          | Come      | आओ         | Fingers curve inward     |
+| 🏠          | Home      | घर         | Touch mouth to cheek     |
+| 🏫          | School    | स्कूल      | Clap twice               |
+| 💼          | Work      | काम        | Fist taps fist           |
+| 🏷️         | Name      | नाम        | H-fingers tap            |
+| 🤔          | How       | कैसे       | Roll fists outward       |
+| 🤷          | What      | क्या       | Palms up shake           |
+| 📍          | Where     | कहाँ       | Index wag                |
+| ⏰           | When      | कब         | Circle finger on finger  |
 
-## License
-
-MIT
