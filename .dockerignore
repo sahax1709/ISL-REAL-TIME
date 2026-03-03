@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.git
+.env
+venv/
+.venv/
+data/train/
+data/synthetic/
+.DS_Store
+README.md
