@@ -242,6 +242,8 @@ PYTHONUNBUFFERED=1
 | ☝️🪝  | X       | एक्स  | Hooked index                            |
 | 🤙    | Y       | य     | Thumb+pinky out                         |
 | ☝️✍️  | Z       | ज़    | Trace Z in air                          |
+
+
 | Emoji | Digit | Hindi | Description               |
 | ----- | ----- | ----- | ------------------------- |
 | ⭕     | 0     | ०     | Fingertips meet thumb     |
@@ -254,6 +256,8 @@ PYTHONUNBUFFERED=1
 | 🖖    | 7     | ७     | Thumb touches ring finger |
 | 🤟    | 8     | ८     | Thumb touches middle      |
 | 👌    | 9     | ९     | Thumb touches index       |
+
+
 | Emoji       | English   | Hindi      | Description              |
 | ----------- | --------- | ---------- | ------------------------ |
 | 👋          | Hello     | नमस्ते     | Open hand salute motion  |
