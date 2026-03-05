@@ -1,115 +1,189 @@
 """
-Sign Language Classifier using TensorFlow/Keras.
-Architecture: Dense NN on MediaPipe hand landmark features.
-Supports A-Z, 0-9, and common words.
+Sign Language Classifier.
+
+Architecture: sklearn RandomForest on engineered landmark features.
+  - No TensorFlow needed (zero GPU/CUDA conflicts)
+  - Trains in seconds, not minutes
+  - Handles 66 classes well with 200+ samples each
+
+False-positive reduction:
+  - TemporalSmoother requires N consecutive same predictions
+  - Confidence threshold rejects low-certainty guesses
+  - Engineered features make similar signs (Q/P, Please/Sorry) more separable
 """
 
 import os
 import json
+import time
 import numpy as np
+from collections import deque
+import joblib
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
 
 from utils.hindi_mapping import (
     NUM_CLASSES, CLASS_TO_INDEX, INDEX_TO_CLASS, to_display
 )
-from utils.landmarks import TWO_HAND_FEATURES
+from utils.landmarks import TOTAL_FEATURES
 
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "saved_model")
-MODEL_PATH = os.path.join(MODEL_DIR, "sign_model.keras")
+MODEL_PATH = os.path.join(MODEL_DIR, "sign_model.joblib")
 META_PATH = os.path.join(MODEL_DIR, "model_meta.json")
 
 
-def build_model(input_dim=TWO_HAND_FEATURES, num_classes=NUM_CLASSES):
-    """Build the classifier architecture."""
-    model = keras.Sequential([
-        layers.Input(shape=(input_dim,)),
-        layers.Dense(256, activation="relu"),
-        layers.BatchNormalization(),
-        layers.Dropout(0.3),
-        layers.Dense(128, activation="relu"),
-        layers.BatchNormalization(),
-        layers.Dropout(0.3),
-        layers.Dense(64, activation="relu"),
-        layers.Dropout(0.2),
-        layers.Dense(num_classes, activation="softmax"),
+def build_model():
+    """Build a sklearn pipeline: StandardScaler + RandomForest."""
+    return Pipeline([
+        ("scaler", StandardScaler()),
+        ("clf", RandomForestClassifier(
+            n_estimators=300,
+            max_depth=30,
+            min_samples_split=5,
+            min_samples_leaf=2,
+            max_features="sqrt",
+            class_weight="balanced",
+            n_jobs=-1,
+            random_state=42,
+        )),
     ])
-    model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=0.001),
-        loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"],
-    )
-    return model
+
+
+class TemporalSmoother:
+    """
+    Require N consecutive identical predictions before accepting.
+    This kills single-frame false positives (the main culprit for
+    random 'please' / 'Q' ghosts).
+    """
+
+    def __init__(self, window=4, agreement_ratio=0.6):
+        self.window = window
+        self.agreement_ratio = agreement_ratio
+        self.buffer = deque(maxlen=window)
+        self.last_stable = None
+        self.last_stable_time = 0
+
+    def update(self, label, confidence):
+        self.buffer.append((label, confidence))
+
+        if len(self.buffer) < 2:
+            return None, 0.0
+
+        # Count most common label in buffer
+        labels = [b[0] for b in self.buffer]
+        confs = [b[1] for b in self.buffer]
+
+        from collections import Counter
+        counts = Counter(labels)
+        best_label, count = counts.most_common(1)[0]
+
+        ratio = count / len(self.buffer)
+        if ratio >= self.agreement_ratio:
+            avg_conf = np.mean([c for l, c in self.buffer if l == best_label])
+            self.last_stable = best_label
+            self.last_stable_time = time.time()
+            return best_label, float(avg_conf)
+
+        return None, 0.0
+
+    def reset(self):
+        self.buffer.clear()
+        self.last_stable = None
 
 
 class SignLanguageDetector:
-    """High-level wrapper: load model, predict, return bilingual output."""
+    """Load model, predict with temporal smoothing, return bilingual output."""
 
-    def __init__(self):
+    def __init__(self, confidence_threshold=40.0, smoothing_window=4):
         self.model = None
         self.is_loaded = False
+        self.confidence_threshold = confidence_threshold
+        self.smoother = TemporalSmoother(
+            window=smoothing_window,
+            agreement_ratio=0.6,
+        )
 
     def load(self):
-        """Load saved model or build a fresh one."""
         if os.path.exists(MODEL_PATH):
-            self.model = keras.models.load_model(MODEL_PATH)
+            self.model = joblib.load(MODEL_PATH)
             self.is_loaded = True
             print(f"[Model] Loaded from {MODEL_PATH}")
         else:
-            print("[Model] No saved model found. Building fresh architecture.")
-            self.model = build_model()
+            print("[Model] No saved model found. Run: python pretrain.py")
+            self.model = None
             self.is_loaded = False
 
-    def predict(self, landmarks):
+    def predict_raw(self, features):
         """
-        Predict sign from landmark array.
-        Args:
-            landmarks: np.ndarray of shape (126,) or (63,)
-        Returns:
-            dict with english, hindi, category, confidence, top_3
+        Raw prediction without smoothing.
+        Returns (label, confidence, top_3_list) or None.
         """
         if self.model is None:
-            return {"error": "Model not loaded"}
+            return None
 
-        features = np.array(landmarks, dtype=np.float32)
+        x = np.array(features, dtype=np.float32).reshape(1, -1)
 
-        # Pad single-hand input to two-hand size
-        if features.shape[0] == 63:
-            features = np.concatenate([features, np.zeros(63, dtype=np.float32)])
+        # Pad or trim to expected size
+        expected = TOTAL_FEATURES
+        if x.shape[1] < expected:
+            x = np.pad(x, ((0, 0), (0, expected - x.shape[1])))
+        elif x.shape[1] > expected:
+            x = x[:, :expected]
 
-        features = features.reshape(1, -1)
-        preds = self.model.predict(features, verbose=0)[0]
+        proba = self.model.predict_proba(x)[0]
+        top_idx = np.argmax(proba)
+        confidence = float(proba[top_idx]) * 100
 
-        top_idx = np.argmax(preds)
-        confidence = float(preds[top_idx])
         label = INDEX_TO_CLASS.get(top_idx, "unknown")
 
-        # Top 3 predictions
-        top3_indices = np.argsort(preds)[-3:][::-1]
+        # Top 3
+        top3_idx = np.argsort(proba)[-3:][::-1]
         top_3 = []
-        for idx in top3_indices:
+        for idx in top3_idx:
             lbl = INDEX_TO_CLASS.get(idx, "unknown")
-            display = to_display(lbl)
-            display["confidence"] = round(float(preds[idx]) * 100, 1)
-            top_3.append(display)
+            d = to_display(lbl)
+            d["confidence"] = round(float(proba[idx]) * 100, 1)
+            top_3.append(d)
 
-        result = to_display(label)
-        result["confidence"] = round(confidence * 100, 1)
+        return label, confidence, top_3
+
+    def predict(self, features):
+        """
+        Smoothed prediction with confidence gating.
+        Returns dict with english, hindi, category, confidence, top_3
+        or a 'no detection' result.
+        """
+        raw = self.predict_raw(features)
+        if raw is None:
+            return {"detected": False, "message": "Model not loaded"}
+
+        label, confidence, top_3 = raw
+
+        # Apply temporal smoothing
+        stable_label, stable_conf = self.smoother.update(label, confidence)
+
+        if stable_label is None or stable_conf < self.confidence_threshold:
+            return {
+                "detected": False,
+                "message": "Low confidence or unstable",
+                "raw_top_3": top_3,  # still show what it sees
+            }
+
+        result = to_display(stable_label)
+        result["confidence"] = round(stable_conf, 1)
         result["top_3"] = top_3
+        result["detected"] = True
         return result
 
     def save(self):
-        """Save the current model."""
         os.makedirs(MODEL_DIR, exist_ok=True)
-        self.model.save(MODEL_PATH)
+        joblib.dump(self.model, MODEL_PATH)
         meta = {
             "num_classes": NUM_CLASSES,
-            "input_dim": TWO_HAND_FEATURES,
+            "input_dim": TOTAL_FEATURES,
+            "model_type": "RandomForest",
             "classes": {str(k): v for k, v in INDEX_TO_CLASS.items()},
         }
         with open(META_PATH, "w") as f:

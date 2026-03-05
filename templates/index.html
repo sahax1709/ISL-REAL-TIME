@@ -7,206 +7,205 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=Noto+Sans+Devanagari:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0f;--surface:#12121a;--s2:#1a1a26;--border:#2a2a3a;--text:#e8e8f0;--dim:#8888a0;--accent:#6366f1;--green:#22c55e;--orange:#f59e0b;--red:#ef4444}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.hindi{font-family:'Noto Sans Devanagari','Outfit',sans-serif}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.03) 1px,transparent 1px);background-size:60px 60px;z-index:0}
-.container{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:24px 20px}
+:root{--bg:#0a0a0f;--sf:#12121a;--s2:#1a1a26;--bd:#2a2a3a;--tx:#e8e8f0;--dm:#8888a0;--ac:#6366f1;--gn:#22c55e;--or:#f59e0b;--rd:#ef4444}
+body{font-family:"Outfit",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.hi{font-family:"Noto Sans Devanagari","Outfit",sans-serif}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(99,102,241,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.03) 1px,transparent 1px);background-size:60px 60px;z-index:0}
+.ct{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:24px 20px}
 header{text-align:center;margin-bottom:32px}
 header h1{font-size:2rem;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-header p{color:var(--dim);font-size:.95rem;font-weight:300;margin-top:6px}
-.tag{display:inline-block;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:.75rem;color:var(--dim);margin-top:10px}
-.grid{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.card-h{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-h h2{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
-.card-b{padding:20px}
+header p{color:var(--dm);font-size:.95rem;margin-top:6px}
+.tag{display:inline-block;background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:4px 14px;font-size:.75rem;color:var(--dm);margin-top:10px}
+.gr{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start}
+@media(max-width:900px){.gr{grid-template-columns:1fr}}
+.cd{background:var(--sf);border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.ch{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.ch h2{font-size:.95rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.cb{padding:20px}
 .vw{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:4/3}
-#webcam{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
-.dot.off{background:var(--red)}
-.dot.wait{background:var(--orange);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.ctrls{display:flex;gap:10px;margin-top:16px}
-.btn{flex:1;padding:12px 20px;border:1px solid var(--border);border-radius:10px;background:var(--s2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s}
-.btn:hover{border-color:var(--accent);background:rgba(99,102,241,.1)}
-.btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.pri:hover{background:#5558e6}
-.btn.dan{border-color:var(--red);color:var(--red)}
-.btn.dan:hover{background:rgba(239,68,68,.1)}
-.rmain{text-align:center;padding:28px 20px}
-.r-en{font-size:3rem;font-weight:700;line-height:1.1}
-.r-hi{font-size:2.4rem;font-weight:700;color:var(--accent);margin-top:4px}
-.r-cat{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
-.cat-letter{background:rgba(99,102,241,.15);color:#a78bfa}
-.cat-digit{background:rgba(34,197,94,.15);color:#22c55e}
-.cat-word{background:rgba(245,158,11,.15);color:#f59e0b}
-.cbar{margin-top:16px;padding:0 20px}
-.ctrack{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}
-.cfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#a78bfa);transition:width .3s}
-.clbl{display:flex;justify-content:space-between;margin-top:6px;font-size:.75rem;color:var(--dim)}
-.tpreds{padding:16px 20px;border-top:1px solid var(--border)}
-.tpreds h3{font-size:.8rem;font-weight:500;color:var(--dim);margin-bottom:10px}
-.prow{display:flex;align-items:center;gap:10px;padding:8px 0}
-.prow+.prow{border-top:1px solid rgba(255,255,255,.04)}
-.prank{width:22px;height:22px;border-radius:6px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--dim);flex-shrink:0}
-.plbl{flex:1}
-.p-en{font-size:.85rem;font-weight:500}
-.p-hi{font-size:.8rem;color:var(--accent)}
-.p-cf{font-size:.8rem;color:var(--dim);font-weight:500}
-.sdsp{min-height:56px;padding:14px 16px;background:var(--s2);border:1px solid var(--border);border-radius:10px;font-size:1rem;line-height:1.6}
-.sctrls{display:flex;gap:8px;margin-top:10px}
-.sctrls .btn{font-size:.8rem;padding:8px 14px}
-.empty{text-align:center;padding:40px 20px;color:var(--dim)}
-.empty .ic{font-size:2.5rem;margin-bottom:12px}
-.srow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;font-size:.85rem}
-.srow+.srow{border-top:1px solid rgba(255,255,255,.04)}
-.srow label{color:var(--dim)}
-.srow select{background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-family:'Outfit',sans-serif;font-size:.8rem}
-.srow input[type=range]{background:var(--border);border:none;border-radius:2px;height:4px;outline:none;-webkit-appearance:none}
-.srow input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer}
-footer{text-align:center;margin-top:40px;padding:20px;color:var(--dim);font-size:.8rem}
+#wc{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.dt{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.dt.on{background:var(--gn);box-shadow:0 0 8px var(--gn)}
+.dt.off{background:var(--rd)}
+.dt.wt{background:var(--or);animation:pu 1.5s infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+.cs{display:flex;gap:10px;margin-top:16px}
+.bt{flex:1;padding:12px 20px;border:1px solid var(--bd);border-radius:10px;background:var(--s2);color:var(--tx);font-family:"Outfit",sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s}
+.bt:hover{border-color:var(--ac);background:rgba(99,102,241,.1)}
+.bt.pr{background:var(--ac);border-color:var(--ac);color:#fff}
+.bt.pr:hover{background:#5558e6}
+.bt.dn{border-color:var(--rd);color:var(--rd)}
+.bt.dn:hover{background:rgba(239,68,68,.1)}
+.rm{text-align:center;padding:28px 20px}
+.re{font-size:3rem;font-weight:700;line-height:1.1}
+.rh{font-size:2.4rem;font-weight:700;color:var(--ac);margin-top:4px}
+.rc{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.cl{background:rgba(99,102,241,.15);color:#a78bfa}
+.cd2{background:rgba(34,197,94,.15);color:#22c55e}
+.cw{background:rgba(245,158,11,.15);color:#f59e0b}
+.cb2{margin-top:16px;padding:0 20px}
+.ct2{height:6px;background:var(--s2);border-radius:3px;overflow:hidden}
+.cf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--ac),#a78bfa);transition:width .3s}
+.cl2{display:flex;justify-content:space-between;margin-top:6px;font-size:.75rem;color:var(--dm)}
+.tp{padding:16px 20px;border-top:1px solid var(--bd)}
+.tp h3{font-size:.8rem;font-weight:500;color:var(--dm);margin-bottom:10px}
+.pw{display:flex;align-items:center;gap:10px;padding:8px 0}
+.pw+.pw{border-top:1px solid rgba(255,255,255,.04)}
+.pk{width:22px;height:22px;border-radius:6px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--dm);flex-shrink:0}
+.pl{flex:1}
+.pe{font-size:.85rem;font-weight:500}
+.ph{font-size:.8rem;color:var(--ac)}
+.pc{font-size:.8rem;color:var(--dm);font-weight:500}
+.sd{min-height:56px;padding:14px 16px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;font-size:1rem;line-height:1.6}
+.sc{display:flex;gap:8px;margin-top:10px}
+.sc .bt{font-size:.8rem;padding:8px 14px}
+.em{text-align:center;padding:40px 20px;color:var(--dm)}
+.em .ic{font-size:2.5rem;margin-bottom:12px}
+.sr{display:flex;align-items:center;justify-content:space-between;padding:10px 0;font-size:.85rem}
+.sr+.sr{border-top:1px solid rgba(255,255,255,.04)}
+.sr label{color:var(--dm)}
+.sr select,.sr input[type=range]{background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);padding:4px 8px;font-family:"Outfit",sans-serif;font-size:.8rem}
+footer{text-align:center;margin-top:40px;padding:20px;color:var(--dm);font-size:.8rem}
+.smooth-label{font-size:.7rem;padding:3px 8px;border-radius:12px;margin-left:8px}
+.smooth-label.stable{background:rgba(34,197,94,.15);color:var(--gn)}
+.smooth-label.raw{background:rgba(245,158,11,.15);color:var(--or)}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="ct">
 <header>
 <h1>Sign Language Detector</h1>
-<p>Real-time hand sign recognition with bilingual output</p>
+<p>Real-time recognition with bilingual output &middot; Local Mode</p>
 <span class="tag">A-Z &middot; 0-9 &middot; Common Words &middot; English + Hindi</span>
 </header>
-<div class="grid">
+<div class="gr">
 <div>
-<div class="card">
-<div class="card-h">
-<h2><span class="dot" id="camDot"></span>Camera Feed</h2>
-<span id="fps" style="font-size:.75rem;color:var(--dim)">-- fps</span>
+<div class="cd"><div class="ch"><h2><span class="dt" id="dot"></span>Camera</h2><span id="fps" style="font-size:.75rem;color:var(--dm)">-- fps</span></div>
+<div class="cb">
+<div class="vw"><video id="wc" autoplay playsinline></video></div>
+<div class="cs">
+<button class="bt pr" id="bCam" onclick="tCam()">Start Camera</button>
+<button class="bt" id="bDet" onclick="tDet()" disabled>Start Detection</button>
 </div>
-<div class="card-b">
-<div class="vw"><video id="webcam" autoplay playsinline></video></div>
-<div class="ctrls">
-<button class="btn pri" id="btnCam" onclick="toggleCam()">Start Camera</button>
-<button class="btn" id="btnDet" onclick="toggleDet()" disabled>Start Detection</button>
-</div>
-<p id="stat" style="margin-top:10px;font-size:.8rem;color:var(--dim)">Click "Start Camera" to begin</p>
-</div>
-</div>
-<div class="card" style="margin-top:16px">
-<div class="card-h"><h2>Sentence Builder</h2></div>
-<div class="card-b">
-<div class="sdsp">
-<div id="sEn" style="color:var(--text)">Start detecting signs to build a sentence...</div>
-<div id="sHi" class="hindi" style="color:var(--accent)"></div>
-</div>
-<div class="sctrls">
-<button class="btn" onclick="addSign()">Add Sign</button>
-<button class="btn" onclick="addSp()">Space</button>
-<button class="btn" onclick="bksp()">Backspace</button>
-<button class="btn dan" onclick="clrS()">Clear</button>
-<button class="btn" onclick="cpS()">Copy</button>
-</div>
-</div>
-</div>
+<p id="st" style="margin-top:10px;font-size:.8rem;color:var(--dm)">Click Start Camera</p>
+</div></div>
+<div class="cd" style="margin-top:16px"><div class="ch"><h2>Sentence Builder</h2></div>
+<div class="cb">
+<div class="sd"><div id="sE" style="color:var(--tx)">Show signs to build a sentence...</div><div id="sH" class="hi" style="color:var(--ac)"></div></div>
+<div class="sc">
+<button class="bt" onclick="addS()">Add</button>
+<button class="bt" onclick="addSp()">Space</button>
+<button class="bt" onclick="bk()">Back</button>
+<button class="bt dn" onclick="clr()">Clear</button>
+<button class="bt" onclick="cp()">Copy</button>
+</div></div></div>
 </div>
 <div>
-<div class="card">
-<div class="card-h"><h2>Detection Result</h2></div>
-<div id="resEmpty" class="empty"><div class="ic">&#9995;</div><p>Show a hand sign to the camera</p></div>
-<div id="resArea" style="display:none">
-<div class="rmain">
-<div class="r-en" id="rEn">A</div>
-<div class="r-hi hindi" id="rHi"></div>
-<span class="r-cat cat-letter" id="rCat">Letter</span>
+<div class="cd"><div class="ch"><h2>Detection</h2></div>
+<div id="rEm" class="em"><div class="ic">&#9995;</div><p>Show a hand sign</p></div>
+<div id="rA" style="display:none">
+<div class="rm"><div class="re" id="rE">A</div><div class="rh hi" id="rHi"></div><span class="rc cl" id="rC">Letter</span><span class="smooth-label stable" id="smL" style="display:none">Stable</span></div>
+<div class="cb2"><div class="ct2"><div class="cf" id="cF" style="width:0%"></div></div><div class="cl2"><span>Confidence</span><span id="cV">0%</span></div></div>
+<div class="tp" id="tP"></div>
+</div></div>
+<div class="cd" style="margin-top:16px"><div class="ch"><h2>Settings</h2></div>
+<div class="cb">
+<div class="sr"><label>Interval</label><select id="iSel" onchange="uI()">
+<option value="200">Fast (200ms)</option><option value="500" selected>Normal (500ms)</option><option value="1000">Slow (1s)</option></select></div>
+<div class="sr"><label>Min confidence</label><input type="range" id="cTh" min="10" max="90" value="35" oninput="$('cTV').textContent=this.value+'%';uSet()"><span id="cTV" style="font-size:.8rem;color:var(--dm);width:40px;text-align:right">35%</span></div>
+<div class="sr"><label>Smoothing window</label><select id="smW" onchange="uSet()">
+<option value="2">Light (2)</option><option value="4" selected>Normal (4)</option><option value="6">Heavy (6)</option></select></div>
+<div class="sr"><label>Auto-add</label><select id="aA"><option value="off">Off</option><option value="on">On (1s hold)</option></select></div>
+</div></div>
+<div class="cd" style="margin-top:16px"><div class="ch"><h2>Signs</h2></div>
+<div class="cb" style="font-size:.8rem;color:var(--dm);line-height:1.8" id="cL">Loading...</div></div>
+</div></div>
+<footer>Sign Language Detector &middot; MediaPipe + sklearn &middot; English &amp; Hindi &middot; Local Only</footer>
 </div>
-<div class="cbar">
-<div class="ctrack"><div class="cfill" id="cFill" style="width:0%"></div></div>
-<div class="clbl"><span>Confidence</span><span id="cVal">0%</span></div>
-</div>
-<div class="tpreds" id="tPreds"></div>
-</div>
-</div>
-<div class="card" style="margin-top:16px">
-<div class="card-h"><h2>Settings</h2></div>
-<div class="card-b">
-<div class="srow">
-<label>Detection interval</label>
-<select id="intSel" onchange="updInt()">
-<option value="200">Fast (200ms)</option>
-<option value="500" selected>Normal (500ms)</option>
-<option value="1000">Slow (1s)</option>
-</select>
-</div>
-<div class="srow">
-<label>Min confidence</label>
-<input type="range" id="cTh" min="10" max="90" value="30" oninput="document.getElementById('cThV').textContent=this.value+'%'">
-<span id="cThV" style="font-size:.8rem;color:var(--dim);width:40px;text-align:right">30%</span>
-</div>
-<div class="srow">
-<label>Auto-add to sentence</label>
-<select id="autoAdd">
-<option value="off">Off</option>
-<option value="on">On (hold 1s)</option>
-</select>
-</div>
-</div>
-</div>
-<div class="card" style="margin-top:16px">
-<div class="card-h"><h2>Supported Signs</h2></div>
-<div class="card-b" style="font-size:.8rem;color:var(--dim);line-height:1.8" id="clsList">Loading...</div>
-</div>
-</div>
-</div>
-<footer>Sign Language Detector &middot; MediaPipe + TensorFlow &middot; English &amp; Hindi</footer>
-</div>
-<canvas id="capCan" style="display:none"></canvas>
+<canvas id="cc" style="display:none"></canvas>
 <script>
-let strm=null,det=false,intId=null,curPred=null,sEn=[],sHi=[],lastSgn=null,lastT=0,fc=0,ft=Date.now();
-const vid=document.getElementById('webcam'),cc=document.getElementById('capCan'),cx=cc.getContext('2d');
-
-async function toggleCam(){strm?stopCam():await startCam()}
-async function startCam(){try{strm=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:'user'}});vid.srcObject=strm;$('btnCam').textContent='Stop Camera';$('btnCam').className='btn dan';$('btnDet').disabled=false;$('camDot').className='dot on';$('stat').textContent='Camera active. Click "Start Detection" to begin.'}catch(e){$('stat').textContent='Camera denied: '+e.message;$('camDot').className='dot off'}}
-function stopCam(){if(det)toggleDet();if(strm){strm.getTracks().forEach(t=>t.stop());strm=null}vid.srcObject=null;$('btnCam').textContent='Start Camera';$('btnCam').className='btn pri';$('btnDet').disabled=true;$('camDot').className='dot off';$('stat').textContent='Camera stopped.'}
-function toggleDet(){if(det){clearInterval(intId);det=false;$('btnDet').textContent='Start Detection';$('btnDet').className='btn';$('stat').textContent='Paused.'}else{det=true;intId=setInterval(capPred,parseInt($('intSel').value));$('btnDet').textContent='Stop Detection';$('btnDet').className='btn dan';$('stat').textContent='Detecting...'}}
-function updInt(){if(det){clearInterval(intId);intId=setInterval(capPred,parseInt($('intSel').value))}}
+let S=null,det=false,iId=null,cur=null,sE=[],sH=[],lS=null,lT=0,fc=0,ft=Date.now();
+const vid=document.getElementById("wc"),cc=document.getElementById("cc"),cx=cc.getContext("2d");
 function $(id){return document.getElementById(id)}
 
-async function capPred(){
-if(!strm||!vid.videoWidth)return;
+async function tCam(){S?sCam():await oCam()}
+async function oCam(){try{S=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:"user"}});vid.srcObject=S;$("bCam").textContent="Stop";$("bCam").className="bt dn";$("bDet").disabled=false;$("dot").className="dt on";$("st").textContent="Camera on. Start detection."}catch(e){$("st").textContent="Denied: "+e.message;$("dot").className="dt off"}}
+function sCam(){if(det)tDet();if(S){S.getTracks().forEach(t=>t.stop());S=null}vid.srcObject=null;$("bCam").textContent="Start Camera";$("bCam").className="bt pr";$("bDet").disabled=true;$("dot").className="dt off";$("st").textContent="Stopped."}
+function tDet(){if(det){clearInterval(iId);det=false;$("bDet").textContent="Start Detection";$("bDet").className="bt";$("st").textContent="Paused."}else{det=true;iId=setInterval(cap,parseInt($("iSel").value));$("bDet").textContent="Stop Detection";$("bDet").className="bt dn";$("st").textContent="Detecting..."}}
+function uI(){if(det){clearInterval(iId);iId=setInterval(cap,parseInt($("iSel").value))}}
+
+async function uSet(){try{await fetch("/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({confidence_threshold:parseInt($("cTh").value),smoothing_window:parseInt($("smW").value)})})}catch(e){}}
+
+async function cap(){
+if(!S||!vid.videoWidth)return;
 cc.width=vid.videoWidth;cc.height=vid.videoHeight;cx.drawImage(vid,0,0);
-const du=cc.toDataURL('image/jpeg',0.8);
-try{const r=await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:du})});
-const d=await r.json();fc++;const now=Date.now();
-if(now-ft>=1000){$('fps').textContent=fc+' fps';fc=0;ft=now}
-if(d.detected&&d.prediction){const p=d.prediction,th=parseInt($('cTh').value);
-if(p.confidence>=th){showRes(p);curPred=p;
-if($('autoAdd').value==='on'){if(p.english===lastSgn){if(now-lastT>1000){addSign();lastSgn=null}}else{lastSgn=p.english;lastT=now}}
-}}else{$('camDot').className='dot wait'}
+var du=cc.toDataURL("image/jpeg",0.8);
+try{var r=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:du})});
+var d=await r.json();fc++;var now=Date.now();
+if(now-ft>=1000){$("fps").textContent=fc+" fps";fc=0;ft=now}
+
+if(d.detected){
+  // Stable smoothed result
+  showR(d,true);
+  cur=d;
+  if($("aA").value==="on"){if(d.english===lS){if(now-lT>1000){addS();lS=null}}else{lS=d.english;lT=now}}
+}else if(d.raw_top_3&&d.raw_top_3.length>0){
+  // Not stable yet, but we have raw predictions — show them as preview
+  showRaw(d.raw_top_3);
+  $("dot").className="dt wt";
+}else{
+  $("dot").className="dt wt";
+  $("smL").style.display="none";
+}
+
 }catch(e){console.error(e)}}
 
-function showRes(p){
-$('resEmpty').style.display='none';$('resArea').style.display='block';$('camDot').className='dot on';
-$('rEn').textContent=p.english;$('rHi').textContent=p.hindi;
-const c=$('rCat');c.textContent=p.category;c.className='r-cat cat-'+p.category;
-$('cFill').style.width=p.confidence+'%';$('cVal').textContent=p.confidence+'%';
-if(p.top_3){let h='<h3>Top Predictions</h3>';
-p.top_3.forEach((x,i)=>{h+='<div class="prow"><span class="prank">'+(i+1)+'</span><div class="plbl"><div class="p-en">'+x.english+'</div><div class="p-hi hindi">'+x.hindi+'</div></div><span class="p-cf">'+x.confidence+'%</span></div>'});
-$('tPreds').innerHTML=h}}
+function showR(p,stable){
+$("rEm").style.display="none";$("rA").style.display="block";$("dot").className="dt on";
+var t=(p.top_3&&p.top_3.length>0)?p.top_3[0]:p;
+$("rE").textContent=t.english;
+$("rHi").textContent=t.hindi;
+var cat=t.category||p.category||"unknown";
+var c=$("rC");c.textContent=cat;
+c.className="rc "+(cat==="letter"?"cl":cat==="digit"?"cd2":"cw");
+$("cF").style.width=t.confidence+"%";$("cV").textContent=t.confidence+"%";
+var sl=$("smL");sl.style.display="inline";
+sl.textContent=stable?"Stable":"Raw";
+sl.className="smooth-label "+(stable?"stable":"raw");
+if(p.top_3)showTop3(p.top_3)}
 
-function addSign(){if(!curPred)return;sEn.push(curPred.english);sHi.push(curPred.hindi);updS()}
-function addSp(){sEn.push(' ');sHi.push(' ');updS()}
-function bksp(){sEn.pop();sHi.pop();updS()}
-function clrS(){sEn=[];sHi=[];updS()}
-function updS(){$('sEn').textContent=sEn.join('')||'Start detecting signs...';$('sHi').textContent=sHi.join('')}
-function cpS(){navigator.clipboard.writeText(sEn.join('')+'\n'+sHi.join('')).then(()=>{$('stat').textContent='Copied!';setTimeout(()=>{if(det)$('stat').textContent='Detecting...'},2000)})}
+function showRaw(t3){
+// Show raw top_3[0] in the big display even before smoother confirms
+$("rEm").style.display="none";$("rA").style.display="block";
+var t=t3[0];
+$("rE").textContent=t.english;
+$("rHi").textContent=t.hindi;
+var cat=t.category||"unknown";
+var c=$("rC");c.textContent=cat;
+c.className="rc "+(cat==="letter"?"cl":cat==="digit"?"cd2":"cw");
+$("cF").style.width=t.confidence+"%";$("cV").textContent=t.confidence+"%";
+var sl=$("smL");sl.style.display="inline";sl.textContent="Raw";sl.className="smooth-label raw";
+showTop3(t3)}
 
-async function loadCls(){try{const r=await fetch('/classes'),d=await r.json(),a=$('clsList');
-let l=[],di=[],w=[];
-d.classes.forEach(c=>{const s='<span style="color:var(--text)">'+c.english+'</span> <span class="hindi" style="color:var(--accent)">'+c.hindi+'</span>';
-if(c.category==='letter')l.push(s);else if(c.category==='digit')di.push(s);else w.push(s)});
-a.innerHTML='<div style="margin-bottom:8px"><strong style="color:var(--text)">Letters ('+l.length+')</strong><br>'+l.join(' &middot; ')+'</div><div style="margin-bottom:8px"><strong style="color:var(--text)">Digits ('+di.length+')</strong><br>'+di.join(' &middot; ')+'</div><div><strong style="color:var(--text)">Words ('+w.length+')</strong><br>'+w.join(' &middot; ')+'</div>'}catch(e){$('clsList').textContent='Could not load.'}}
-loadCls();
+function showTop3(t3){
+var h="<h3>Top 3</h3>";
+t3.forEach(function(x,i){h+='<div class="pw"><span class="pk">'+(i+1)+'</span><div class="pl"><div class="pe">'+x.english+'</div><div class="ph hi">'+x.hindi+'</div></div><span class="pc">'+x.confidence+'%</span></div>'});
+$("tP").innerHTML=h}
+
+function addS(){if(!cur||!cur.detected)return;var t=(cur.top_3&&cur.top_3.length>0)?cur.top_3[0]:cur;sE.push(t.english);sH.push(t.hindi);uS()}
+function addSp(){sE.push(" ");sH.push(" ");uS()}
+function bk(){sE.pop();sH.pop();uS()}
+function clr(){sE=[];sH=[];uS()}
+function uS(){$("sE").textContent=sE.join("")||"Show signs to build a sentence...";$("sH").textContent=sH.join("")}
+function cp(){navigator.clipboard.writeText(sE.join("")+"\n"+sH.join("")).then(function(){$("st").textContent="Copied!";setTimeout(function(){if(det)$("st").textContent="Detecting..."},2e3)})}
+
+async function lC(){try{var r=await fetch("/classes"),d=await r.json(),a=$("cL");
+var l=[],di=[],w=[];
+d.classes.forEach(function(c){var s='<span style="color:var(--tx)">'+c.english+'</span> <span class="hi" style="color:var(--ac)">'+c.hindi+"</span>";
+if(c.category==="letter")l.push(s);else if(c.category==="digit")di.push(s);else w.push(s)});
+a.innerHTML='<div style="margin-bottom:8px"><strong style="color:var(--tx)">Letters ('+l.length+")</strong><br>"+l.join(" &middot; ")+'</div><div style="margin-bottom:8px"><strong style="color:var(--tx)">Digits ('+di.length+")</strong><br>"+di.join(" &middot; ")+'</div><div><strong style="color:var(--tx)">Words ('+w.length+")</strong><br>"+w.join(" &middot; ")+"</div>"
+}catch(e){$("cL").textContent="Error"}}
+lC();
 </script>
 </body>
 </html>

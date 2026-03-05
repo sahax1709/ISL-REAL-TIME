@@ -1,115 +1,115 @@
 """
-train.py - Train the sign language model on collected data.
+train.py - Train on real collected data (from collect.py).
 
 Usage:
-    python train.py                          # Train on all data in data/train/
-    python train.py --epochs 50 --batch 32   # Custom training params
+    python train.py
+    python train.py --augment     # with data augmentation
 
-Data format:
-    data/train/<class_label>/sample_001.npy  # Each .npy file = (126,) landmark array
+Data: data/train/<class>/*.npy (each file = feature vector)
 """
 
 import os
+import sys
 import argparse
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+sys.path.insert(0, os.path.dirname(__file__))
 
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from model.detector import build_model, SignLanguageDetector, MODEL_DIR, MODEL_PATH
-from utils.hindi_mapping import CLASS_TO_INDEX, NUM_CLASSES
+from utils.hindi_mapping import CLASS_TO_INDEX, INDEX_TO_CLASS, NUM_CLASSES
+from utils.landmarks import TOTAL_FEATURES
+from model.detector import build_model, SignLanguageDetector
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "train")
 
 
-def load_dataset(data_dir=DATA_DIR):
-    X, y = [], []
-    classes_found = set()
+def augment_sample(features, rng, noise=0.03):
+    """Light augmentation: add small noise, scale slightly."""
+    aug = features.copy()
+    aug += rng.normal(0, noise, aug.shape).astype(np.float32)
+    scale = rng.uniform(0.95, 1.05)
+    aug *= scale
+    return aug
 
-    if not os.path.exists(data_dir):
-        print(f"[!] Data directory not found: {data_dir}")
-        print("    Run collect.py first to gather training samples.")
+
+def load_data(augment=False, aug_factor=3):
+    X, y = [], []
+    rng = np.random.RandomState(42)
+
+    if not os.path.exists(DATA_DIR):
+        print(f"No data at {DATA_DIR}. Run collect.py first.")
         return None, None
 
-    for class_name in sorted(os.listdir(data_dir)):
-        class_dir = os.path.join(data_dir, class_name)
-        if not os.path.isdir(class_dir):
-            continue
-        if class_name not in CLASS_TO_INDEX:
-            print(f"[!] Skipping unknown class: {class_name}")
+    for cls in sorted(os.listdir(DATA_DIR)):
+        cls_dir = os.path.join(DATA_DIR, cls)
+        if not os.path.isdir(cls_dir) or cls not in CLASS_TO_INDEX:
             continue
 
-        label_idx = CLASS_TO_INDEX[class_name]
-        classes_found.add(class_name)
+        idx = CLASS_TO_INDEX[cls]
         count = 0
 
-        for fname in os.listdir(class_dir):
-            if fname.endswith(".npy"):
-                fpath = os.path.join(class_dir, fname)
-                try:
-                    landmarks = np.load(fpath)
-                    if landmarks.shape[0] == 63:
-                        landmarks = np.concatenate([landmarks, np.zeros(63)])
-                    X.append(landmarks)
-                    y.append(label_idx)
-                    count += 1
-                except Exception as e:
-                    print(f"[!] Error loading {fpath}: {e}")
+        for f in os.listdir(cls_dir):
+            if not f.endswith(".npy"):
+                continue
+            try:
+                feat = np.load(os.path.join(cls_dir, f))
+                if feat.shape[0] < TOTAL_FEATURES:
+                    feat = np.pad(feat, (0, TOTAL_FEATURES - feat.shape[0]))
+                X.append(feat[:TOTAL_FEATURES])
+                y.append(idx)
+                count += 1
 
-        print(f"  {class_name:>12s}: {count} samples")
+                if augment:
+                    for _ in range(aug_factor):
+                        X.append(augment_sample(feat[:TOTAL_FEATURES], rng))
+                        y.append(idx)
+            except Exception as e:
+                print(f"  Error: {f}: {e}")
 
-    if len(X) == 0:
-        print("[!] No training data found.")
+        print(f"  {cls:>12s}: {count} samples" + (f" (+{count*aug_factor} aug)" if augment else ""))
+
+    if not X:
+        print("No data found.")
         return None, None
 
-    print(f"Total: {len(X)} samples across {len(classes_found)} classes")
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.int32)
 
 
-def train(epochs=100, batch_size=32, val_split=0.2):
+def train(augment=False):
     print("=" * 50)
-    print("  Sign Language Model Training")
-    print("=" * 50)
+    print("  Training on Real Data")
+    print("=" * 50 + "\n")
 
-    X, y = load_dataset()
+    X, y = load_data(augment=augment)
     if X is None:
         return
 
     X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=val_split, random_state=42, stratify=y
+        X, y, test_size=0.2, random_state=42, stratify=y
     )
-    print(f"Train: {len(X_train)} | Val: {len(X_val)}")
+    print(f"\nTrain: {len(X_train)}  |  Val: {len(X_val)}\n")
 
     model = build_model()
+    model.fit(X_train, y_train)
 
-    callbacks = [
-        EarlyStopping(monitor="val_loss", patience=15, restore_best_weights=True, verbose=1),
-        ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=5, min_lr=1e-6, verbose=1),
-    ]
+    acc = model.score(X_val, y_val)
+    print(f"Validation Accuracy: {acc:.4f}\n")
 
-    history = model.fit(
-        X_train, y_train,
-        validation_data=(X_val, y_val),
-        epochs=epochs,
-        batch_size=batch_size,
-        callbacks=callbacks,
-        verbose=1,
-    )
+    # Per-class report
+    y_pred = model.predict(X_val)
+    labels_present = sorted(set(y_val))
+    names = [INDEX_TO_CLASS[i] for i in labels_present]
+    print(classification_report(y_val, y_pred, labels=labels_present, target_names=names))
 
-    val_loss, val_acc = model.evaluate(X_val, y_val, verbose=0)
-    print(f"Val Accuracy: {val_acc:.4f} | Val Loss: {val_loss:.4f}")
-
-    detector = SignLanguageDetector()
-    detector.model = model
-    detector.save()
-    print("Model saved successfully.")
+    det = SignLanguageDetector()
+    det.model = model
+    det.save()
+    print("\nDone! Restart app.py to use the new model.")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train sign language model")
-    parser.add_argument("--epochs", type=int, default=100)
-    parser.add_argument("--batch", type=int, default=32)
-    parser.add_argument("--val-split", type=float, default=0.2)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--augment", action="store_true", help="Augment data 3x")
     args = parser.parse_args()
-    train(epochs=args.epochs, batch_size=args.batch, val_split=args.val_split)
+    train(augment=args.augment)
