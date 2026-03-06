@@ -1,6 +1,4 @@
-"""
-English to Hindi/Devanagari mappings for sign language output.
-"""
+"""English to Hindi/Devanagari mappings."""
 
 LETTER_TO_HINDI = {
     "A": "\u0905", "B": "\u092c", "C": "\u0938", "D": "\u0921", "E": "\u0907",

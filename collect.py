@@ -1,14 +1,12 @@
 """
-collect.py - Collect real training data via webcam.
+collect.py - Collect training data via webcam.
 
 Usage:
-    python collect.py                    # interactive
-    python collect.py --class A          # specific class
-    python collect.py --samples 100      # samples per class
+    python collect.py                  # interactive
+    python collect.py --class A        # specific class
+    python collect.py --samples 100
 
-Controls:
-    SPACE = start/stop recording
-    Q     = quit current class
+Controls: SPACE=record, Q=quit
 """
 
 import os
@@ -16,19 +14,19 @@ import sys
 import argparse
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import cv2
 from utils.hindi_mapping import ALL_CLASSES, to_hindi
 from utils.landmarks import LandmarkExtractor
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "train")
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "train")
 
 
-def collect_for_class(class_name, num_samples=50, extractor=None):
-    class_dir = os.path.join(DATA_DIR, class_name)
-    os.makedirs(class_dir, exist_ok=True)
-    existing = len([f for f in os.listdir(class_dir) if f.endswith(".npy")])
+def collect(class_name, num_samples=50, extractor=None):
+    cdir = os.path.join(DATA_DIR, class_name)
+    os.makedirs(cdir, exist_ok=True)
+    existing = len([f for f in os.listdir(cdir) if f.endswith(".npy")])
 
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -37,10 +35,9 @@ def collect_for_class(class_name, num_samples=50, extractor=None):
 
     recording = False
     collected = 0
-    hindi = to_hindi(class_name)
 
-    print(f"\nCollecting: {class_name} ({hindi})")
-    print(f"Existing: {existing} samples")
+    print(f"\nClass: {class_name} ({to_hindi(class_name)})")
+    print(f"Existing: {existing} | Target: +{num_samples}")
     print("SPACE=record  Q=quit\n")
 
     while True:
@@ -52,21 +49,19 @@ def collect_for_class(class_name, num_samples=50, extractor=None):
         result = extractor.process_frame(frame)
         display = result["annotated"]
 
-        status = "REC" if recording else "PAUSED"
-        color = (0, 0, 255) if recording else (200, 200, 200)
-        cv2.putText(display, f"{class_name} ({hindi})", (10, 30),
+        color = (0, 0, 255) if recording else (180, 180, 180)
+        label = "REC" if recording else "PAUSED"
+        cv2.putText(display, f"{class_name} ({to_hindi(class_name)})", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
-        cv2.putText(display, status, (10, 65),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+        cv2.putText(display, label, (10, 65), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
         cv2.putText(display, f"{existing+collected}/{existing+num_samples}",
                     (10, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         if recording and result["features"] is not None:
-            fname = f"sample_{existing+collected:04d}.npy"
-            np.save(os.path.join(class_dir, fname), result["features"])
+            np.save(os.path.join(cdir, f"s_{existing+collected:04d}.npy"), result["features"])
             collected += 1
             if collected >= num_samples:
-                print(f"Done: {collected} samples for {class_name}")
+                print(f"Done: {collected} samples")
                 break
 
         cv2.imshow("Collect", display)
@@ -81,11 +76,8 @@ def collect_for_class(class_name, num_samples=50, extractor=None):
     return collected
 
 
-def interactive(num_samples=50):
-    extractor = LandmarkExtractor()
-    print("\n" + "=" * 50)
-    print("  Sign Language Data Collection")
-    print("=" * 50)
+def interactive(num_samples):
+    ext = LandmarkExtractor()
     print(f"\nClasses ({len(ALL_CLASSES)}):")
     for i, c in enumerate(ALL_CLASSES):
         print(f"  {i+1:3d}. {c:>12s} {to_hindi(c)}", end="")
@@ -94,31 +86,28 @@ def interactive(num_samples=50):
     print("\n")
 
     while True:
-        choice = input("Class name (or 'all' / 'quit'): ").strip()
+        choice = input("Class (or 'quit'): ").strip()
         if choice.lower() == "quit":
             break
-        elif choice.lower() == "all":
-            for c in ALL_CLASSES:
-                collect_for_class(c, num_samples, extractor)
+        c = choice if choice in ALL_CLASSES else choice.upper()
+        if c not in ALL_CLASSES:
+            c = choice.lower()
+        if c in ALL_CLASSES:
+            collect(c, num_samples, ext)
         else:
-            c = choice if choice in ALL_CLASSES else choice.upper()
-            if c in ALL_CLASSES:
-                collect_for_class(c, num_samples, extractor)
-            else:
-                print(f"Unknown: {choice}")
-
-    extractor.close()
+            print(f"Unknown: {choice}")
+    ext.close()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--class-name", type=str, default=None)
-    parser.add_argument("--samples", type=int, default=50)
-    args = parser.parse_args()
+    p = argparse.ArgumentParser()
+    p.add_argument("--class-name", type=str, default=None)
+    p.add_argument("--samples", type=int, default=50)
+    a = p.parse_args()
 
-    if args.class_name:
+    if a.class_name:
         ext = LandmarkExtractor()
-        collect_for_class(args.class_name, args.samples, ext)
+        collect(a.class_name, a.samples, ext)
         ext.close()
     else:
-        interactive(args.samples)
+        interactive(a.samples)

@@ -66,9 +66,9 @@ header p{color:var(--dm);font-size:.95rem;margin-top:6px}
 .sr label{color:var(--dm)}
 .sr select,.sr input[type=range]{background:var(--s2);border:1px solid var(--bd);border-radius:6px;color:var(--tx);padding:4px 8px;font-family:"Outfit",sans-serif;font-size:.8rem}
 footer{text-align:center;margin-top:40px;padding:20px;color:var(--dm);font-size:.8rem}
-.smooth-label{font-size:.7rem;padding:3px 8px;border-radius:12px;margin-left:8px}
-.smooth-label.stable{background:rgba(34,197,94,.15);color:var(--gn)}
-.smooth-label.raw{background:rgba(245,158,11,.15);color:var(--or)}
+.sml{font-size:.7rem;padding:3px 8px;border-radius:12px;margin-left:8px}
+.sml.st{background:rgba(34,197,94,.15);color:var(--gn)}
+.sml.rw{background:rgba(245,158,11,.15);color:var(--or)}
 </style>
 </head>
 <body>
@@ -104,7 +104,7 @@ footer{text-align:center;margin-top:40px;padding:20px;color:var(--dm);font-size:
 <div class="cd"><div class="ch"><h2>Detection</h2></div>
 <div id="rEm" class="em"><div class="ic">&#9995;</div><p>Show a hand sign</p></div>
 <div id="rA" style="display:none">
-<div class="rm"><div class="re" id="rE">A</div><div class="rh hi" id="rHi"></div><span class="rc cl" id="rC">Letter</span><span class="smooth-label stable" id="smL" style="display:none">Stable</span></div>
+<div class="rm"><div class="re" id="rE">A</div><div class="rh hi" id="rHi"></div><span class="rc cl" id="rC">Letter</span><span class="sml st" id="smL" style="display:none">Stable</span></div>
 <div class="cb2"><div class="ct2"><div class="cf" id="cF" style="width:0%"></div></div><div class="cl2"><span>Confidence</span><span id="cV">0%</span></div></div>
 <div class="tp" id="tP"></div>
 </div></div>
@@ -112,9 +112,9 @@ footer{text-align:center;margin-top:40px;padding:20px;color:var(--dm);font-size:
 <div class="cb">
 <div class="sr"><label>Interval</label><select id="iSel" onchange="uI()">
 <option value="200">Fast (200ms)</option><option value="500" selected>Normal (500ms)</option><option value="1000">Slow (1s)</option></select></div>
-<div class="sr"><label>Min confidence</label><input type="range" id="cTh" min="10" max="90" value="35" oninput="$('cTV').textContent=this.value+'%';uSet()"><span id="cTV" style="font-size:.8rem;color:var(--dm);width:40px;text-align:right">35%</span></div>
+<div class="sr"><label>Min confidence</label><input type="range" id="cTh" min="10" max="90" value="30" oninput="G('cTV').textContent=this.value+'%';uSet()"><span id="cTV" style="font-size:.8rem;color:var(--dm);width:40px;text-align:right">30%</span></div>
 <div class="sr"><label>Smoothing window</label><select id="smW" onchange="uSet()">
-<option value="2">Light (2)</option><option value="4" selected>Normal (4)</option><option value="6">Heavy (6)</option></select></div>
+<option value="2">Light (2)</option><option value="3" selected>Normal (3)</option><option value="5">Heavy (5)</option></select></div>
 <div class="sr"><label>Auto-add</label><select id="aA"><option value="off">Off</option><option value="on">On (1s hold)</option></select></div>
 </div></div>
 <div class="cd" style="margin-top:16px"><div class="ch"><h2>Signs</h2></div>
@@ -126,15 +126,15 @@ footer{text-align:center;margin-top:40px;padding:20px;color:var(--dm);font-size:
 <script>
 let S=null,det=false,iId=null,cur=null,sE=[],sH=[],lS=null,lT=0,fc=0,ft=Date.now();
 const vid=document.getElementById("wc"),cc=document.getElementById("cc"),cx=cc.getContext("2d");
-function $(id){return document.getElementById(id)}
+function G(id){return document.getElementById(id)}
 
 async function tCam(){S?sCam():await oCam()}
-async function oCam(){try{S=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:"user"}});vid.srcObject=S;$("bCam").textContent="Stop";$("bCam").className="bt dn";$("bDet").disabled=false;$("dot").className="dt on";$("st").textContent="Camera on. Start detection."}catch(e){$("st").textContent="Denied: "+e.message;$("dot").className="dt off"}}
-function sCam(){if(det)tDet();if(S){S.getTracks().forEach(t=>t.stop());S=null}vid.srcObject=null;$("bCam").textContent="Start Camera";$("bCam").className="bt pr";$("bDet").disabled=true;$("dot").className="dt off";$("st").textContent="Stopped."}
-function tDet(){if(det){clearInterval(iId);det=false;$("bDet").textContent="Start Detection";$("bDet").className="bt";$("st").textContent="Paused."}else{det=true;iId=setInterval(cap,parseInt($("iSel").value));$("bDet").textContent="Stop Detection";$("bDet").className="bt dn";$("st").textContent="Detecting..."}}
-function uI(){if(det){clearInterval(iId);iId=setInterval(cap,parseInt($("iSel").value))}}
+async function oCam(){try{S=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:"user"}});vid.srcObject=S;G("bCam").textContent="Stop";G("bCam").className="bt dn";G("bDet").disabled=false;G("dot").className="dt on";G("st").textContent="Camera on. Start detection."}catch(e){G("st").textContent="Denied: "+e.message;G("dot").className="dt off"}}
+function sCam(){if(det)tDet();if(S){S.getTracks().forEach(t=>t.stop());S=null}vid.srcObject=null;G("bCam").textContent="Start Camera";G("bCam").className="bt pr";G("bDet").disabled=true;G("dot").className="dt off";G("st").textContent="Stopped."}
+function tDet(){if(det){clearInterval(iId);det=false;G("bDet").textContent="Start Detection";G("bDet").className="bt";G("st").textContent="Paused."}else{det=true;iId=setInterval(cap,parseInt(G("iSel").value));G("bDet").textContent="Stop Detection";G("bDet").className="bt dn";G("st").textContent="Detecting..."}}
+function uI(){if(det){clearInterval(iId);iId=setInterval(cap,parseInt(G("iSel").value))}}
 
-async function uSet(){try{await fetch("/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({confidence_threshold:parseInt($("cTh").value),smoothing_window:parseInt($("smW").value)})})}catch(e){}}
+async function uSet(){try{await fetch("/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({confidence_threshold:parseInt(G("cTh").value),smoothing_window:parseInt(G("smW").value)})})}catch(e){}}
 
 async function cap(){
 if(!S||!vid.videoWidth)return;
@@ -142,69 +142,69 @@ cc.width=vid.videoWidth;cc.height=vid.videoHeight;cx.drawImage(vid,0,0);
 var du=cc.toDataURL("image/jpeg",0.8);
 try{var r=await fetch("/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:du})});
 var d=await r.json();fc++;var now=Date.now();
-if(now-ft>=1000){$("fps").textContent=fc+" fps";fc=0;ft=now}
+if(now-ft>=1000){G("fps").textContent=fc+" fps";fc=0;ft=now}
 
 if(d.detected){
   // Stable smoothed result
   showR(d,true);
   cur=d;
-  if($("aA").value==="on"){if(d.english===lS){if(now-lT>1000){addS();lS=null}}else{lS=d.english;lT=now}}
+  if(G("aA").value==="on"){if(d.english===lS){if(now-lT>1000){addS();lS=null}}else{lS=d.english;lT=now}}
 }else if(d.raw_top_3&&d.raw_top_3.length>0){
   // Not stable yet, but we have raw predictions — show them as preview
   showRaw(d.raw_top_3);
-  $("dot").className="dt wt";
+  G("dot").className="dt wt";
 }else{
-  $("dot").className="dt wt";
-  $("smL").style.display="none";
+  G("dot").className="dt wt";
+  G("smL").style.display="none";
 }
 
 }catch(e){console.error(e)}}
 
 function showR(p,stable){
-$("rEm").style.display="none";$("rA").style.display="block";$("dot").className="dt on";
+G("rEm").style.display="none";G("rA").style.display="block";G("dot").className="dt on";
 var t=(p.top_3&&p.top_3.length>0)?p.top_3[0]:p;
-$("rE").textContent=t.english;
-$("rHi").textContent=t.hindi;
+G("rE").textContent=t.english;
+G("rHi").textContent=t.hindi;
 var cat=t.category||p.category||"unknown";
-var c=$("rC");c.textContent=cat;
+var c=G("rC");c.textContent=cat;
 c.className="rc "+(cat==="letter"?"cl":cat==="digit"?"cd2":"cw");
-$("cF").style.width=t.confidence+"%";$("cV").textContent=t.confidence+"%";
-var sl=$("smL");sl.style.display="inline";
+G("cF").style.width=t.confidence+"%";G("cV").textContent=t.confidence+"%";
+var sl=G("smL");sl.style.display="inline";
 sl.textContent=stable?"Stable":"Raw";
-sl.className="smooth-label "+(stable?"stable":"raw");
+sl.className="sml "+(stable?"st":"rw");
 if(p.top_3)showTop3(p.top_3)}
 
 function showRaw(t3){
 // Show raw top_3[0] in the big display even before smoother confirms
-$("rEm").style.display="none";$("rA").style.display="block";
+G("rEm").style.display="none";G("rA").style.display="block";
 var t=t3[0];
-$("rE").textContent=t.english;
-$("rHi").textContent=t.hindi;
+G("rE").textContent=t.english;
+G("rHi").textContent=t.hindi;
 var cat=t.category||"unknown";
-var c=$("rC");c.textContent=cat;
+var c=G("rC");c.textContent=cat;
 c.className="rc "+(cat==="letter"?"cl":cat==="digit"?"cd2":"cw");
-$("cF").style.width=t.confidence+"%";$("cV").textContent=t.confidence+"%";
-var sl=$("smL");sl.style.display="inline";sl.textContent="Raw";sl.className="smooth-label raw";
+G("cF").style.width=t.confidence+"%";G("cV").textContent=t.confidence+"%";
+var sl=G("smL");sl.style.display="inline";sl.textContent="Raw";sl.className="sml rw";
 showTop3(t3)}
 
 function showTop3(t3){
 var h="<h3>Top 3</h3>";
 t3.forEach(function(x,i){h+='<div class="pw"><span class="pk">'+(i+1)+'</span><div class="pl"><div class="pe">'+x.english+'</div><div class="ph hi">'+x.hindi+'</div></div><span class="pc">'+x.confidence+'%</span></div>'});
-$("tP").innerHTML=h}
+G("tP").innerHTML=h}
 
 function addS(){if(!cur||!cur.detected)return;var t=(cur.top_3&&cur.top_3.length>0)?cur.top_3[0]:cur;sE.push(t.english);sH.push(t.hindi);uS()}
 function addSp(){sE.push(" ");sH.push(" ");uS()}
 function bk(){sE.pop();sH.pop();uS()}
 function clr(){sE=[];sH=[];uS()}
-function uS(){$("sE").textContent=sE.join("")||"Show signs to build a sentence...";$("sH").textContent=sH.join("")}
-function cp(){navigator.clipboard.writeText(sE.join("")+"\n"+sH.join("")).then(function(){$("st").textContent="Copied!";setTimeout(function(){if(det)$("st").textContent="Detecting..."},2e3)})}
+function uS(){G("sE").textContent=sE.join("")||"Show signs to build a sentence...";G("sH").textContent=sH.join("")}
+function cp(){navigator.clipboard.writeText(sE.join("")+"\n"+sH.join("")).then(function(){G("st").textContent="Copied!";setTimeout(function(){if(det)G("st").textContent="Detecting..."},2e3)})}
 
-async function lC(){try{var r=await fetch("/classes"),d=await r.json(),a=$("cL");
+async function lC(){try{var r=await fetch("/classes"),d=await r.json(),a=G("cL");
 var l=[],di=[],w=[];
 d.classes.forEach(function(c){var s='<span style="color:var(--tx)">'+c.english+'</span> <span class="hi" style="color:var(--ac)">'+c.hindi+"</span>";
 if(c.category==="letter")l.push(s);else if(c.category==="digit")di.push(s);else w.push(s)});
 a.innerHTML='<div style="margin-bottom:8px"><strong style="color:var(--tx)">Letters ('+l.length+")</strong><br>"+l.join(" &middot; ")+'</div><div style="margin-bottom:8px"><strong style="color:var(--tx)">Digits ('+di.length+")</strong><br>"+di.join(" &middot; ")+'</div><div><strong style="color:var(--tx)">Words ('+w.length+")</strong><br>"+w.join(" &middot; ")+"</div>"
-}catch(e){$("cL").textContent="Error"}}
+}catch(e){G("cL").textContent="Error"}}
 lC();
 </script>
 </body>
