@@ -9,6 +9,6 @@ joblib==1.4.2
 
 # cd isl
 # python -m venv venv
-# source venv/bin/activate
+# venv/bin/activate
 # python setup.py              
 # python app.py    
